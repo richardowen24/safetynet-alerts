@@ -63,4 +63,11 @@ public class FireStationService {
                 .orElse(false);
     }
 
+    public List<String> getPhoneNumbersByStation(String stationNumber) {
+        return getPersonsByStation(stationNumber).stream()
+                .map(Person::getPhone)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     }

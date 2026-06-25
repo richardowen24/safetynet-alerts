@@ -38,4 +38,9 @@ public class FireStationController {
         return new FireStationCoverageDTO(personSummaries, adultCount, childCount);
     }
 
+    @GetMapping("/phoneAlert")
+    public List<String> getPhoneAlert(@RequestParam String firestation) {
+        return fireStationService.getPhoneNumbersByStation(firestation);
+    }
+
 }
