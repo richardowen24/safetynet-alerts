@@ -1,5 +1,7 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.FireAddressDTO;
+import com.safetynet.alerts.dto.FloodAddressDTO;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,6 +36,7 @@ public class FireStationServiceTest {
         john.setFirstName("John");
         john.setLastName("Boyd");
         john.setAddress("1509 Culver St");
+        john.setPhone("841-874-6512");
 
         station1 = new FireStation();
         station1.setAddress("1509 Culver St");
@@ -88,4 +92,64 @@ public class FireStationServiceTest {
         assertEquals(0, adultCount);
     }
 
+    @Test
+    public void getPhoneNumbersByStation_shouldReturnDistinctPhones() {
+        when(mockRepository.getFireStations()).thenReturn(List.of(station1));
+        when(mockPersonService.getPersonsByAddress("1509 Culver St")).thenReturn(List.of(john));
+
+        List<String> result = fireStationService.getPhoneNumbersByStation("3");
+
+        assertEquals(1, result.size());
+        assertEquals("841-874-6512", result.get(0));
+    }
+
+    @Test
+    public void getResidentsByAddress_shouldReturnCorrectStationAndResidents() {
+        when(mockRepository.getFireStations()).thenReturn(List.of(station1));
+        when(mockPersonService.getPersonsByAddress("1509 Culver St")).thenReturn(List.of(john));
+        when(mockPersonService.getMedicalRecordForPerson(john)).thenReturn(Optional.empty());
+
+        FireAddressDTO result = fireStationService.getResidentsByAddress("1509 Culver St");
+
+        assertEquals("3", result.getStationNumber());
+        assertEquals(1, result.getResidents().size());
+        assertEquals("John", result.getResidents().get(0).getFirstName());
+    }
+
+    @Test
+    public void getHouseholdsByStations_shouldReturnGroupedAddresses() {
+        when(mockRepository.getFireStations()).thenReturn(List.of(station1));
+        when(mockPersonService.getPersonsByAddress("1509 Culver St")).thenReturn(List.of(john));
+        when(mockPersonService.getMedicalRecordForPerson(john)).thenReturn(Optional.empty());
+
+        List<FloodAddressDTO> result = fireStationService.getHouseholdsByStations(List.of("3"));
+
+        assertEquals(1, result.size());
+        assertEquals("1509 Culver St", result.get(0).getAddress());
+    }
+
+    @Test
+    public void addFireStation_shouldReturnSavedStation() {
+        FireStation result = fireStationService.addFireStation(station1);
+
+        assertEquals("1509 Culver St", result.getAddress());
+    }
+
+    @Test
+    public void updateFireStation_shouldReturnTrue_whenRepositoryReturnsTrue() {
+        when(mockRepository.updateFireStation("1509 Culver St", "5")).thenReturn(true);
+
+        boolean result = fireStationService.updateFireStation("1509 Culver St", "5");
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void deleteFireStationByAddress_shouldReturnTrue_whenRepositoryReturnsTrue() {
+        when(mockRepository.deleteFireStationByAddress("1509 Culver St")).thenReturn(true);
+
+        boolean result = fireStationService.deleteFireStationByAddress("1509 Culver St");
+
+        assertTrue(result);
+    }
 }
