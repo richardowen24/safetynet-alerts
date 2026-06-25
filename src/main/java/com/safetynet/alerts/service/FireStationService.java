@@ -1,7 +1,9 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.FloodAddressDTO;
 import com.safetynet.alerts.dto.FireAddressDTO;
 import com.safetynet.alerts.dto.FireResidentDTO;
+import com.safetynet.alerts.dto.FloodAddressDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -81,9 +83,15 @@ public class FireStationService {
 public FireAddressDTO getResidentsByAddress(String address) {
         String stationNumber = getStationByAddress(address);
         List<Person> residents = personService.getPersonsByAddress(address);
+        List<FireResidentDTO> fireResidents = buildFireResidentList(residents);
+
+        return new FireAddressDTO(stationNumber, fireResidents);
+    }
+
+    private List<FireResidentDTO> buildFireResidentList(List<Person> persons) {
         List<FireResidentDTO> fireResidents = new ArrayList<>();
 
-        for (Person person : residents) {
+        for (Person person : persons) {
             Optional<MedicalRecord> medicalRecord = personService.getMedicalRecordForPerson(person);
 
             int age = 0;
@@ -105,7 +113,28 @@ public FireAddressDTO getResidentsByAddress(String address) {
                     allergies));
         }
 
-        return new FireAddressDTO(stationNumber, fireResidents);
+        return fireResidents;
+    }
+    public List<FloodAddressDTO> getHouseholdsByStations(List<String> stationNumbers) {
+        List<String> addresses = new ArrayList<>();
+
+        for (String stationNumber : stationNumbers) {
+            addresses.addAll(getAddressesByStation(stationNumber));
+        }
+
+        List<String> uniqueAddresses = addresses.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<FloodAddressDTO> floodAddresses = new ArrayList<>();
+
+        for (String address : uniqueAddresses) {
+            List<Person> residents = personService.getPersonsByAddress(address);
+            List<FireResidentDTO> fireResidents = buildFireResidentList(residents);
+            floodAddresses.add(new FloodAddressDTO(address, fireResidents));
+        }
+
+        return floodAddresses;
     }
 
     }

@@ -1,5 +1,6 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.FloodAddressDTO;
 import com.safetynet.alerts.dto.FireAddressDTO;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.PersonSummaryDTO;
@@ -47,5 +48,10 @@ public class FireStationController {
     @GetMapping("/fire")
     public FireAddressDTO getFireInfo(@RequestParam String address) {
         return fireStationService.getResidentsByAddress(address);
+    }
+
+    @GetMapping("/flood/stations")
+    public List<FloodAddressDTO> getFloodStations(@RequestParam List<String> stations) {
+        return fireStationService.getHouseholdsByStations(stations);
     }
 }
