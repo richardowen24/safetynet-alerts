@@ -22,4 +22,9 @@ public class PersonController {
         return personService.getChildAlertsByAddress(address);
     }
 
+    @GetMapping("/communityEmail")
+    public List<String> getCommunityEmail(@RequestParam String city) {
+        return personService.getEmailsByCity(city);
+    }
+    
 }

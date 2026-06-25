@@ -74,4 +74,11 @@ public class PersonService {
     }
     List<ChildAlertDTO> childAlerts = new ArrayList<>();
 
+    public List<String> getEmailsByCity(String city) {
+        return getPersonsByCity(city).stream()
+                .map(Person::getEmail)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+    
     }
