@@ -1,5 +1,6 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.FireAddressDTO;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.PersonSummaryDTO;
 import com.safetynet.alerts.model.Person;
@@ -43,4 +44,8 @@ public class FireStationController {
         return fireStationService.getPhoneNumbersByStation(firestation);
     }
 
+    @GetMapping("/fire")
+    public FireAddressDTO getFireInfo(@RequestParam String address) {
+        return fireStationService.getResidentsByAddress(address);
+    }
 }

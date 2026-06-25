@@ -1,10 +1,19 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.FireAddressDTO;
+import com.safetynet.alerts.dto.FireResidentDTO;
+import com.safetynet.alerts.model.MedicalRecord;
+import java.util.ArrayList;
+import java.util.Optional;
+import com.safetynet.alerts.dto.FireAddressDTO;
+import com.safetynet.alerts.dto.FireResidentDTO;
 import com.safetynet.alerts.model.FireStation;
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +77,35 @@ public class FireStationService {
                 .map(Person::getPhone)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+public FireAddressDTO getResidentsByAddress(String address) {
+        String stationNumber = getStationByAddress(address);
+        List<Person> residents = personService.getPersonsByAddress(address);
+        List<FireResidentDTO> fireResidents = new ArrayList<>();
+
+        for (Person person : residents) {
+            Optional<MedicalRecord> medicalRecord = personService.getMedicalRecordForPerson(person);
+
+            int age = 0;
+            List<String> medications = new ArrayList<>();
+            List<String> allergies = new ArrayList<>();
+
+            if (medicalRecord.isPresent()) {
+                age = ageCalculator.calculateAge(medicalRecord.get().getBirthdate());
+                medications = medicalRecord.get().getMedications();
+                allergies = medicalRecord.get().getAllergies();
+            }
+
+            fireResidents.add(new FireResidentDTO(
+                    person.getFirstName(),
+                    person.getLastName(),
+                    person.getPhone(),
+                    age,
+                    medications,
+                    allergies));
+        }
+
+        return new FireAddressDTO(stationNumber, fireResidents);
     }
 
     }
