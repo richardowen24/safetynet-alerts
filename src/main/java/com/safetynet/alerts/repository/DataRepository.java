@@ -68,4 +68,22 @@ public class DataRepository {
                 person.getFirstName().equalsIgnoreCase(firstName)
                         && person.getLastName().equalsIgnoreCase(lastName));
     }
+
+    public void addFireStation(FireStation fireStation) {
+        fireStations.add(fireStation);
+    }
+
+    public boolean updateFireStation(String address, String newStationNumber) {
+        for (FireStation fireStation : fireStations) {
+            if (fireStation.getAddress().equalsIgnoreCase(address)) {
+                fireStation.setStation(newStationNumber);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean deleteFireStationByAddress(String address) {
+        return fireStations.removeIf(fireStation -> fireStation.getAddress().equalsIgnoreCase(address));
+    }
 }

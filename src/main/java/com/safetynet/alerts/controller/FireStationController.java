@@ -4,9 +4,15 @@ import com.safetynet.alerts.dto.FloodAddressDTO;
 import com.safetynet.alerts.dto.FireAddressDTO;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.PersonSummaryDTO;
+import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.service.FireStationService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,5 +59,20 @@ public class FireStationController {
     @GetMapping("/flood/stations")
     public List<FloodAddressDTO> getFloodStations(@RequestParam List<String> stations) {
         return fireStationService.getHouseholdsByStations(stations);
+    }
+
+    @PostMapping("/firestation")
+    public FireStation addFireStation(@RequestBody FireStation fireStation) {
+        return fireStationService.addFireStation(fireStation);
+    }
+
+    @PutMapping("/firestation")
+    public boolean updateFireStation(@RequestParam String address, @RequestParam String station) {
+        return fireStationService.updateFireStation(address, station);
+    }
+
+    @DeleteMapping("/firestation")
+    public boolean deleteFireStation(@RequestParam String address) {
+        return fireStationService.deleteFireStationByAddress(address);
     }
 }

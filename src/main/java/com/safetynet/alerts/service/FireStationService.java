@@ -137,4 +137,17 @@ public FireAddressDTO getResidentsByAddress(String address) {
         return floodAddresses;
     }
 
+    public FireStation addFireStation(FireStation fireStation) {
+        dataRepository.addFireStation(fireStation);
+        return fireStation;
+    }
+
+    public boolean updateFireStation(String address, String newStationNumber) {
+        return dataRepository.updateFireStation(address, newStationNumber);
+    }
+
+    public boolean deleteFireStationByAddress(String address) {
+        return dataRepository.deleteFireStationByAddress(address);
+    }
+
     }
