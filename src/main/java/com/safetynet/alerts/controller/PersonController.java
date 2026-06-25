@@ -1,5 +1,6 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.dto.ChildAlertDTO;
 import com.safetynet.alerts.service.PersonService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,5 +27,9 @@ public class PersonController {
     public List<String> getCommunityEmail(@RequestParam String city) {
         return personService.getEmailsByCity(city);
     }
-    
+    @GetMapping("/personInfo")
+    public List<PersonInfoDTO> getPersonInfo(@RequestParam String lastName) {
+        return personService.getPersonInfoByLastName(lastName);
+    }
+
 }

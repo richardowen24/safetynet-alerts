@@ -1,8 +1,10 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import java.util.ArrayList;
 import com.safetynet.alerts.dto.ChildAlertDTO;
 import com.safetynet.alerts.dto.HouseholdMemberDTO;
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.DataRepository;
@@ -80,5 +82,33 @@ public class PersonService {
                 .distinct()
                 .collect(Collectors.toList());
     }
-    
+    public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
+        List<Person> persons = getPersonsByLastName(lastName);
+        List<PersonInfoDTO> personInfos = new ArrayList<>();
+
+        for (Person person : persons) {
+            Optional<MedicalRecord> medicalRecord = getMedicalRecordForPerson(person);
+
+            int age = 0;
+            List<String> medications = new ArrayList<>();
+            List<String> allergies = new ArrayList<>();
+
+            if (medicalRecord.isPresent()) {
+                age = ageCalculator.calculateAge(medicalRecord.get().getBirthdate());
+                medications = medicalRecord.get().getMedications();
+                allergies = medicalRecord.get().getAllergies();
+            }
+
+            personInfos.add(new PersonInfoDTO(
+                    person.getFirstName(),
+                    person.getLastName(),
+                    person.getAddress(),
+                    age,
+                    person.getEmail(),
+                    medications,
+                    allergies));
+        }
+
+        return personInfos;
+    }
     }
