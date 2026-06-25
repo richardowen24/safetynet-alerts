@@ -86,4 +86,26 @@ public class DataRepository {
     public boolean deleteFireStationByAddress(String address) {
         return fireStations.removeIf(fireStation -> fireStation.getAddress().equalsIgnoreCase(address));
     }
+
+    public void addMedicalRecord(MedicalRecord medicalRecord) {
+        medicalRecords.add(medicalRecord);
+    }
+
+    public boolean updateMedicalRecord(MedicalRecord updatedRecord) {
+        for (int i = 0; i < medicalRecords.size(); i++) {
+            MedicalRecord existing = medicalRecords.get(i);
+            if (existing.getFirstName().equalsIgnoreCase(updatedRecord.getFirstName())
+                    && existing.getLastName().equalsIgnoreCase(updatedRecord.getLastName())) {
+                medicalRecords.set(i, updatedRecord);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean deleteMedicalRecord(String firstName, String lastName) {
+        return medicalRecords.removeIf(record ->
+                record.getFirstName().equalsIgnoreCase(firstName)
+                        && record.getLastName().equalsIgnoreCase(lastName));
+    }
 }
