@@ -26,7 +26,7 @@ public class DataRepository {
             JsonMapper jsonMapper = JsonMapper.builder().build();
             ClassPathResource resource = new ClassPathResource("data.json");
             DataContainer container = jsonMapper.readValue(resource.getInputStream(), DataContainer.class);
-            
+
             this.persons = container.getPersons();
             this.fireStations = container.getFirestations();
             this.medicalRecords = container.getMedicalrecords();
@@ -45,5 +45,27 @@ public class DataRepository {
 
     public List<MedicalRecord> getMedicalRecords() {
         return new ArrayList<>(medicalRecords);
+    }
+
+    public void addPerson(Person person) {
+        persons.add(person);
+    }
+
+    public boolean updatePerson(Person updatedPerson) {
+        for (int i = 0; i < persons.size(); i++) {
+            Person existing = persons.get(i);
+            if (existing.getFirstName().equalsIgnoreCase(updatedPerson.getFirstName())
+                    && existing.getLastName().equalsIgnoreCase(updatedPerson.getLastName())) {
+                persons.set(i, updatedPerson);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean deletePerson(String firstName, String lastName) {
+        return persons.removeIf(person ->
+                person.getFirstName().equalsIgnoreCase(firstName)
+                        && person.getLastName().equalsIgnoreCase(lastName));
     }
 }

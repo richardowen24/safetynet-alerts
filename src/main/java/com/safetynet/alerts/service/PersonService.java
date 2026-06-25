@@ -111,4 +111,18 @@ public class PersonService {
 
         return personInfos;
     }
+
+    public Person addPerson(Person person) {
+        dataRepository.addPerson(person);
+        return person;
+    }
+
+    public boolean updatePerson(Person person) {
+        return dataRepository.updatePerson(person);
+    }
+
+    public boolean deletePerson(String firstName, String lastName) {
+        return dataRepository.deletePerson(firstName, lastName);
+    }
+    
     }
