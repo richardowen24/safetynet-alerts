@@ -1,5 +1,8 @@
 package com.safetynet.alerts.service;
 
+import java.util.ArrayList;
+import com.safetynet.alerts.dto.ChildAlertDTO;
+import com.safetynet.alerts.dto.HouseholdMemberDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.DataRepository;
@@ -45,5 +48,30 @@ public class PersonService {
                 .findFirst();
     }
 
+    public List<ChildAlertDTO> getChildAlertsByAddress(String address) {
+        List<Person> residents = getPersonsByAddress(address);
+        List<ChildAlertDTO> childAlerts = new java.util.ArrayList<>();
+
+        for (Person person : residents) {
+            Optional<MedicalRecord> medicalRecord = getMedicalRecordForPerson(person);
+
+            if (medicalRecord.isPresent()) {
+                int age = ageCalculator.calculateAge(medicalRecord.get().getBirthdate());
+
+                if (ageCalculator.isChild(age)) {
+                    List<HouseholdMemberDTO> householdMembers = residents.stream()
+                            .filter(otherPerson -> !(otherPerson.getFirstName().equals(person.getFirstName())
+                                                   && otherPerson.getLastName().equals(person.getLastName())))
+                            .map(otherPerson -> new HouseholdMemberDTO(otherPerson.getFirstName(), otherPerson.getLastName()))
+                            .collect(Collectors.toList());
+
+                    childAlerts.add(new ChildAlertDTO(person.getFirstName(), person.getLastName(), age, householdMembers));
+                }
+            }
+        }
+
+        return childAlerts;
     }
-    
+    List<ChildAlertDTO> childAlerts = new ArrayList<>();
+
+    }

@@ -12,3 +12,4 @@ public class FireStationCoverageDTO {
     private long adultCount;
     private long childCount;
 }
+
